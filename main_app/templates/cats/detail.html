@@ -9,6 +9,9 @@
 {% else %}
 <p>Age: Kitten</p>
 {% endif %}
+
 <a href="/cats/" class="btn btn-primary">View All Cats</a>
+<a href="{% url 'cats_update' cat.id %}" class="btn btn-warning">Update Cat's Details</a>
+<a href="{% url 'cats_delete' cat.id %}" class="btn btn-danger">Delete Cat</a>
 {% endblock content %}
    
