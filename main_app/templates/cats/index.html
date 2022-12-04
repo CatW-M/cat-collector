@@ -6,6 +6,9 @@
     <div class="card text-center">
       <div class="card-body">
         <h5 class="card-title">{{ cat.name }}</h5>
+        <a href='/user/{{cat.user.username}}'>
+          <p>Adopted By: {{cat.user.username}}</p>
+        </a>
         <a href="/cats/{{ cat.id }}" class="btn btn-primary">View {{ cat.name }}</a>
       </div>
   </div>

@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .models import Cat, Dog
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
 
 class DogCreate(CreateView):
   model = Dog
@@ -13,6 +14,12 @@ class CatCreate(CreateView):
   model = Cat
   fields = '__all__'
   success_url = '/cats'
+
+  def form_valid(self, form):
+    self.object = form.save(commit=False)
+    self.object.user = self.request.user
+    self.object.save()
+    return HttpResponseRedirect('/cats')
 
 class CatUpdate(UpdateView):
   model = Cat
@@ -58,7 +65,12 @@ def cats_index(request):
 def cats_detail(request, cat_id):
     cat = Cat.objects.get(id=cat_id)
     return render(request, 'cats/detail.html', {'cat': cat })
-# def cats_index(request):
+
+def profile(request, username):
+    user = User.objects.get(username=username)
+    cats = Cat.objects.filter(user=user)
+    return render(request, 'profile.html', {'username': username, 'cats': cats})
+    # def cats_index(request):
 #     return render(request, 'cats/index.html', {'cats': cats})
 
 

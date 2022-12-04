@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div data-gb-custom-block data-tag="extends" data-0='base.html'></div>
+
+<div data-gb-custom-block data-tag="load"></div>
+
+<div data-gb-custom-block data-tag="block">
+
+<h1>{{ username }}'s collection:</h1>
+
+<div data-gb-custom-block data-tag="for">
+
+<a href="/cats/{{ cat.id }}">
+  <h3>{{ cat.name }}</h3>
+</a>
+
+</div>
+
+</div>
+
+{% endblock content %}
