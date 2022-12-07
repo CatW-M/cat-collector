@@ -1,9 +1,12 @@
 from django.shortcuts import render
-# from django.http import HttpResponse
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .models import Cat, Dog
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 class DogCreate(CreateView):
   model = Dog
@@ -30,6 +33,7 @@ class CatUpdate(UpdateView):
     self.object.save()
     return HttpResponseRedirect('/cats/' + str(self.object.pk))
 
+@method_decorator(login_required, name='dispatch')
 class CatDelete(DeleteView):
   model = Cat
   success_url = '/cats'
@@ -66,13 +70,43 @@ def cats_detail(request, cat_id):
     cat = Cat.objects.get(id=cat_id)
     return render(request, 'cats/detail.html', {'cat': cat })
 
+@login_required
 def profile(request, username):
     user = User.objects.get(username=username)
     cats = list(Cat.objects.filter(user=user))
     return render(request, 'profile.html', {'username': username, 'cats': cats})
-    # def cats_index(request):
-#     return render(request, 'cats/index.html', {'cats': cats})
 
+def login_view(request):
+     # if post, then authenticate (user submitted username and password)
+    if request.method == 'POST':
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            u = form.cleaned_data['username']
+            p = form.cleaned_data['password']
+            user = authenticate(username = u, password = p)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect('/user/'+u)
+                else:
+                    print('The account has been disabled.')
+            else:
+                print('The username and/or password is incorrect.')
+    else: # it was a get request so send the emtpy login form
+        form = AuthenticationForm()
+        return render(request, 'login.html', {'form': form})
 
-# Create your views here.
-#similar to controllers in javascript...this is like an index file
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/')
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+        return render(request, 'signup.html', {'form': form})
