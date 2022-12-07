@@ -68,7 +68,7 @@ def cats_detail(request, cat_id):
 
 def profile(request, username):
     user = User.objects.get(username=username)
-    cats = Cat.objects.filter(user=user)
+    cats = list(Cat.objects.filter(user=user))
     return render(request, 'profile.html', {'username': username, 'cats': cats})
     # def cats_index(request):
 #     return render(request, 'cats/index.html', {'cats': cats})

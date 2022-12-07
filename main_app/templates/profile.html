@@ -1,23 +1,15 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
-<div data-gb-custom-block data-tag="extends" data-0='base.html'></div>
-
-<div data-gb-custom-block data-tag="load"></div>
-
-<div data-gb-custom-block data-tag="block">
-
 <h1>{{ username }}'s collection:</h1>
 
-<div data-gb-custom-block data-tag="for">
-
+{% for cat in cats %}
 <a href="/cats/{{ cat.id }}">
   <h3>{{ cat.name }}</h3>
 </a>
 
-</div>
+{% endfor %}
 
-</div>
-
-{% endblock content %}
+{% endblock %}
